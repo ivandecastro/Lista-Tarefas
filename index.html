@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas com Prioridades</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div>
+        <h1>Lista de Tarefas com Prioridades</h1>
+        <input type="text" id="taskInput" placeholder="Adicione uma nova tarefa">
+        <select id="priorityInput">
+            <option value="Baixa">Baixa</option>
+            <option value="Média">Média</option>
+            <option value="Alta">Alta</option>
+        </select>
+        <button id="addTaskButton" onclick="adicionarTarefa()">Adicionar Tarefa</button> 
+        <ul id="taskList"></ul>
+        <button id="clearButton" onclick="limparTarefas()">Limpar Tarefas</button>
+    </div>
+</body>
+</html>
