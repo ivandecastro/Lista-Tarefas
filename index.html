@@ -13,14 +13,18 @@
     <div class="container">
         <h1>Lista de Tarefas com Prioridades</h1>
         <input type="text" id="task-input" placeholder="Adicione uma nova tarefa">
-        <select id="priorityInput">
+        <select id="priority-input">
             <option value="Baixa">Baixa</option>
             <option value="Média">Média</option>
             <option value="Alta">Alta</option>
         </select>
-        <button id="addTaskButton" onclick="adicionarTarefa()">Adicionar Tarefa</button>
-        <ul id="task-list"></ul>
-        <button id="clearButton" onclick="limparTarefas()">Limpar Tarefas</button>
+        <div class="button-wrapper">
+            <button id="addTaskButton" onclick="adicionar()">Adicionar Tarefa</button>
+            <button id="clearButton" onclick="limparTarefas()">Limpar Tarefas</button>
+        </div>
+        <div class="task-list-container">
+            <ul id="task-list"></ul>
+        </div>
     </div>
 </body>
 
