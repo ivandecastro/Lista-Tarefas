@@ -17,21 +17,28 @@ const informacoes = () => {
     return [inputTarefa, prioridadeValue];
 };
 
-const itensArray = () => tarefas.forEach(tarefa => {
-    exibirTarefas(tarefa.descricao, tarefa.prioridade, tarefa.data);
+const itensArray = () => tarefas.forEach((tarefa, i) => {
+    exibirTarefas(tarefa.descricao, tarefa.prioridade, tarefa.data, tarefa.concluida, i);
 });
 
-const botaoConfirmar = () => {
-    const link = document.createElement('a');
-    link.href = '#';
+const botaoConfirmar = (indice) => {
+    const link = document.createElement('button');
 
-    let permitido = true;
+    // Define o status inicial com base na tarefa armazenada
+    let permitido = tarefas[indice].concluida;
     aplicarEstilo(link, permitido);
 
     link.addEventListener("click", () => {
         permitido = !permitido;
+
+        // Atualiza o objeto no array com base no novo estado
+        tarefas[indice].concluida = permitido;
+        salvarTarefasNoStorage();
         aplicarEstilo(link, permitido);
+        console.log(tarefas);
     });
+
+    return link;
 };
 
 const aplicarEstilo = (botao, permitido) => {
@@ -40,14 +47,18 @@ const aplicarEstilo = (botao, permitido) => {
     botao.style.cursor = "pointer";
     botao.style.transition = "all 0.3s ease";
     botao.style.textDecoration = 'none';
+    botao.style.padding = '10px 18px'
+    botao.style.position = 'relative';
+    botao.style.bottom = '10px';
+    botao.style.right = '8px';
 
     if (permitido) {
-        botao.textContent = "INCOMPLETO";
-        botao.style.backgroundColor = "#f44336"; //Vermelho
-        botao.style.color = "#fff";
-    } else {
         botao.textContent = "COMPLETO";
         botao.style.backgroundColor = "#4caf50"; //Verde
+        botao.style.color = "#fff";
+    } else {
+        botao.textContent = "INCOMPLETO";
+        botao.style.backgroundColor = "#f44336"; //Vermelho
         botao.style.color = "#fff";
     }
 };
@@ -90,12 +101,9 @@ const adicionar = () => {
         return;
     }
 
-    let status = false;
+    const tarefa = adicionarTarefa(inputTarefa.value, prioridadeValue, false); // false = incompleta
 
-    const tarefa = adicionarTarefa(inputTarefa.value, prioridadeValue, status); // false = incompleta
-
-    exibirTarefas(tarefa.descricao, tarefa.prioridade, tarefa.data, tarefa.concluida);
-    salvarTarefasNoStorage();
+    exibirTarefas(tarefa.descricao, tarefa.prioridade, tarefa.data, tarefa.concluida, tarefas.length - 1);
     inputTarefa.value = '';
     console.log(tarefas);
 };
@@ -104,25 +112,16 @@ const adicionar = () => {
 // Exibição das Tarefas
 // ==============================
 
-const exibirTarefas = (input, priority, data, status) => {
+const exibirTarefas = (input, priority, data, status, indice) => {
     const listaTarefas = document.getElementById("task-list");
     const novaTarefa = document.createElement("li");
 
     const texto = document.createTextNode(`${input} - prioridade: ${priority} - Data: ${data} -`);
 
-    const link = document.createElement('a');
-    link.href = '#';
-
-    aplicarEstilo(link, !status); // Se status = false, botão começa como INCOMPLETO
-
-    link.addEventListener("click", () => {
-        status = !status;
-        aplicarEstilo(link, !status);
-        salvarTarefasNoStorage(); // se quiser salvar as mudanças de status
-    });
+    const confirmar = botaoConfirmar(indice);
 
     novaTarefa.appendChild(texto);
-    novaTarefa.appendChild(link);
+    novaTarefa.appendChild(confirmar);
 
     listaTarefas.appendChild(novaTarefa);
 };
@@ -133,15 +132,18 @@ const exibirTarefas = (input, priority, data, status) => {
 
 const limparTarefas = () => {
     const listaTarefas = document.getElementById('task-list');
-    const tarefas = listaTarefas.getElementsByTagName('li');
+    const tarefasDom = listaTarefas.getElementsByTagName('li');
 
-    if (tarefas.length === 0) {
+    if (tarefasDom.length === 0) {
         alert('Não há tarefas para remover!');
         return;
     }
 
-    const tarefaRemovida = tarefas[tarefas.length - 1];
+    const tarefaRemovida = tarefasDom[tarefas.length - 1];
     listaTarefas.removeChild(tarefaRemovida);
+    tarefas.pop();
+    salvarTarefasNoStorage();
+    console.log(tarefas);
 };
 
 // ==============================
