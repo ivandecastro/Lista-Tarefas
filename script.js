@@ -17,10 +17,10 @@ const dataAtual = () => { //Formata a data atual para o padrão "dd/mm/aaaa - hh
 };
 
 const exibirTodasAsTarefas = () => { //Itera sobre o array de tarefas e exibe cada uma delas.
-    for(let i = 0; i < tarefas.length; i++) {
+    for (let i = 0; i < tarefas.length; i++) {
         exibirTarefaDoIndice(i);
     }
-} 
+}
 
 const informacoes = () => { //Coleta as informações dos elementos HTML necessários para adicionar uma tarefa.
     const inputTarefa = document.getElementById('task-input'); //Coleta o input de tarefa
@@ -55,7 +55,7 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
         salvarTarefasNoStorage(); //Salva as alterações no localStorage
 
         listaTarefas.innerHTML = ''; //Limpa a lista de tarefas visualmente
-        itensArray(); //Reexibe tudo com índices corretos
+        exibirTodasAsTarefas()
         console.log(tarefas);
     });
 
@@ -138,10 +138,9 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista
         return;
     }
 
-   adicionarTarefa(inputTarefa.value, prioridadeValue, false); // false = incompleta
+    adicionarTarefa(inputTarefa.value, prioridadeValue, false); // false = incompleta
 
-    //Adiciona a tarefa ao array e exibe na lista
-    exibirTarefaDoIndice(tarefas.length - 1);
+    exibirTarefaDoIndice(tarefas.length - 1); //Adiciona a tarefa ao array e exibe na lista
     inputTarefa.value = ''; //Limpa o campo de entrada após adicionar a tarefa
     console.log(tarefas);
 };
@@ -150,19 +149,18 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista
 //#region Exibição das Tarefas
 // Exibe as tarefas na lista HTML, criando elementos para cada tarefa e adicionando botões de ação.
 const exibirTarefaDoIndice = (indice) => {
-    const {descricao, prioridade, data} = tarefas[indice]
+    const { descricao, prioridade, data } = tarefas[indice]
     // Coleta as informações necessárias para exibir a tarefa
-    const [,, listaTarefas] = informacoes();
+    const [, , listaTarefas] = informacoes();
 
     const novaTarefa = document.createElement("li"); //Cria um novo elemento de lista para a tarefa
-    novaTarefa.className = 'text-list';
+    novaTarefa.className = 'text-list'; //Criando uma ClassName para a tag 'li'
     novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`); //Define o texto da marca d’água
 
     definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade
 
     const texto = document.createElement("span"); //Cria um elemento de texto para exibir a descrição da tarefa
-    //Define o texto da tarefa com as informações coletadas
-    texto.textContent = `${descricao} - Data: ${data}`; //
+    texto.textContent = `${descricao} - Data: ${data}`; //Define o texto da tarefa com as informações coletadas
 
     const containerBotoes = document.createElement("div"); //Cria um contêiner para os botões de ação
     containerBotoes.style.display = "flex"; //Define o display do contêiner como flexível
@@ -188,7 +186,7 @@ const exibirTarefaDoIndice = (indice) => {
 //#region {Limpeza de Tarefas
 
 const limparTarefas = () => { //Função para limpar todas as tarefas da lista
-    const [input,, lista] = informacoes();
+    const [input, , lista] = informacoes();
 
     if (tarefas.length === 0) { //Verifica se não há tarefas para limpar
         alert("Não há tarefas para limpar!");
