@@ -84,6 +84,21 @@ const botaoConfirmar = (indice) => { //Cria um botão para confirmar a conclusã
 //----------------------------------------------------
 //#region Estilos de elementos HTML
 
+const aplicarEstiloMarcaDagua = (elemento, prioridade) => {
+    const estilo = document.getElementById('estiloMarcaDagua');
+
+    if (estilo.value === 'canto') {
+        elemento.setAttribute('data-prioridade', `${prioridade} Prioridade`);
+        elemento.classList.add('marca-canto');
+    } else if (estilo.value === 'centro') {
+        elemento.setAttribute('data-prioridade', `${prioridade} Prioridade`);
+        elemento.classList.add('marca-centro');
+    } else if (estilo.value === 'nenhum') {
+        elemento.removeAttribute('data-prioridade');
+        elemento.classList.remove('marca-canto', 'marca-centro');
+    }
+};
+
 const definirCorDaPrioridade = (elemento, prioridade) => {
     if (prioridade === 'Alta') {
         elemento.style.backgroundColor = '#FF7F7F';
@@ -155,7 +170,7 @@ const exibirTarefaDoIndice = (indice) => {
 
     const novaTarefa = document.createElement("li"); //Cria um novo elemento de lista para a tarefa
     novaTarefa.className = 'text-list'; //Criando uma ClassName para a tag 'li'
-    novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`); //Define o texto da marca d’água
+    aplicarEstiloMarcaDagua(novaTarefa, prioridade);
 
     definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade
 

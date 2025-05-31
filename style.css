@@ -7,10 +7,11 @@
 body {
   background: #f5f6fa;
   font-family: 'Segoe UI', Arial, sans-serif;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   padding: 0;
 }
-
+      
 .container {
   text-align: center;
   background: none;
@@ -52,32 +53,43 @@ h1 {
   overflow: hidden;
 }
 
-.text-list::before {
+.text-list {
+  position: relative;
+}
+
+.marca-dagua {
+  display: list-item;
+  position: absolute;
+  bottom: 510px;
+  justify-content: left;
+  grid-auto-rows: 100px;
+  grid-gap: 90px 30px;    
+}
+
+.marca-canto::after {
+  content: attr(data-prioridade);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.3); /* Cor clara, tipo sombra */
+  font-weight: bold;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* Central estilo carimbo */
+.marca-centro::after {
   content: attr(data-prioridade);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 3rem;
-  color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.3);
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
-}
-
-.text-list::after {
-  content: attr(data-prioridade);
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.3);
-  font-weight: bold;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-.text-list {
-  position: relative;
 }
 
 form {
