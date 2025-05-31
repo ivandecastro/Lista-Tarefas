@@ -44,8 +44,11 @@ h1 {
 
 .text-list {
   position: relative;
-  padding: 1rem;
+  padding: 16px;
   border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #000;
   overflow: hidden;
 }
 
@@ -57,10 +60,24 @@ h1 {
   transform: translate(-50%, -50%);
   font-size: 3rem;
   color: rgba(0, 0, 0, 0.1);
-  /* Cor e transparência da marca d'água */
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
+}
+
+.text-list::after {
+  content: attr(data-prioridade);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.text-list {
+  position: relative;
 }
 
 form {
@@ -78,8 +95,6 @@ input[type="text"] {
   outline: none;
   transition: border 0.2s;
 }
-
-
 
 input[type="text"]:focus {
   border: 1.5px solid #6c63ff;
@@ -212,7 +227,6 @@ select option {
 
 .task-list-container {
   max-height: 50vh;
-  /* metade da altura da tela */
   overflow-y: auto;
   margin-top: 24px;
   border: 1px solid #eee;
