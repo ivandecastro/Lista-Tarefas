@@ -29,6 +29,25 @@ const informacoes = () => { //Coleta as informações dos elementos HTML necess�
     return [inputTarefa, prioridadeValue, tasksList];
 };
 
+const eventMarcaDagua = () => {
+    document.getElementById('estiloMarcaDagua').addEventListener('change', (e) => {
+        const novoEstilo = e.target.value;
+        localStorage.setItem('estiloMarcaDagua', novoEstilo);
+
+        const todasAsTarefas = document.querySelectorAll('#task-list li');
+        todasAsTarefas.forEach(tarefa => {
+            tarefa.classList.remove('marca-canto', 'marca-centro');
+            if (novoEstilo === 'canto') {
+                tarefa.classList.add('marca-canto');
+            } else if (novoEstilo === 'centro') {
+                tarefa.classList.add('marca-centro');
+            }
+            // se for 'nenhum', nada será adicionado
+        });
+    });
+};
+eventMarcaDagua();
+
 //Adiciona um evento de tecla "Enter" para o input de tarefa, permitindo adicionar a tarefa ao pressionar "Enter".
 const inputEnter = () => document.getElementById('task-input').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') { //Verifica se a tecla pressionada é "Enter"
@@ -84,18 +103,15 @@ const botaoConfirmar = (indice) => { //Cria um botão para confirmar a conclusã
 //----------------------------------------------------
 //#region Estilos de elementos HTML
 
-const aplicarEstiloMarcaDagua = (elemento, prioridade) => {
-    const estilo = document.getElementById('estiloMarcaDagua');
+const aplicarEstiloMarcaDagua = (elemento) => {
+    const estilo = localStorage.getItem('estiloMarcaDagua') || 'nenhum';
 
-    if (estilo.value === 'canto') {
-        elemento.setAttribute('data-prioridade', `${prioridade} Prioridade`);
+    elemento.classList.remove('marca-canto', 'marca-centro');
+
+    if (estilo === 'canto') {
         elemento.classList.add('marca-canto');
-    } else if (estilo.value === 'centro') {
-        elemento.setAttribute('data-prioridade', `${prioridade} Prioridade`);
+    } else if (estilo === 'centro') {
         elemento.classList.add('marca-centro');
-    } else if (estilo.value === 'nenhum') {
-        elemento.removeAttribute('data-prioridade');
-        elemento.classList.remove('marca-canto', 'marca-centro');
     }
 };
 
@@ -170,9 +186,10 @@ const exibirTarefaDoIndice = (indice) => {
 
     const novaTarefa = document.createElement("li"); //Cria um novo elemento de lista para a tarefa
     novaTarefa.className = 'text-list'; //Criando uma ClassName para a tag 'li'
-    aplicarEstiloMarcaDagua(novaTarefa, prioridade);
+    novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`);
 
     definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade
+    aplicarEstiloMarcaDagua(novaTarefa);
 
     const texto = document.createElement("span"); //Cria um elemento de texto para exibir a descrição da tarefa
     texto.textContent = `${descricao} - Data: ${data}`; //Define o texto da tarefa com as informações coletadas
@@ -222,8 +239,11 @@ const limparTarefas = () => { //Função para limpar todas as tarefas da lista
 //===============================================================
 
 //#region {Eventos
-window.onload = () => { //Ao carregar a página, exibe as tarefas já existentes no localStorage
+window.onload = () => {
+    const estiloSalvo = localStorage.getItem('estiloMarcaDagua') || 'nenhum';
+    document.getElementById('estiloMarcaDagua').value = estiloSalvo;
+
     exibirTodasAsTarefas();
-    console.log(tarefas); //Exibe o array de tarefas no console para depuração
+    console.log(tarefas);
 };
 //#endregion Eventos}
