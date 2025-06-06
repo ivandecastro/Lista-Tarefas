@@ -57,13 +57,27 @@ h1 {
   position: relative;
 }
 
-.marca-dagua {
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  /* para responsividade */
+  gap: 10px;
+}
+
+.marca-dagua,
+.filtros {
   display: list-item;
-  position: absolute;
-  bottom: 510px;
-  justify-content: left;
-  grid-auto-rows: 100px;
-  grid-gap: 90px 30px;
+  align-items: center;
+  list-style: none;
+  gap: 10px;
+}
+
+.filtros select,
+.filtros input {
+  padding: 6px;
 }
 
 .marca-canto::after {

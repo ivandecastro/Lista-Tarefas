@@ -71,21 +71,21 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
 
     link.addEventListener("click", (event) => { //Adiciona um evento de clique ao botão.
         let confirm = window.confirm('Você tem certeza que deseja remover esta tarefa?');
-        if (!confirm) return;
+        if (!confirm) return; //Verifica se o usuário realmente deseja remover a tarefa.
 
         event.preventDefault(); //Previne o comportamento padrão do botão.
 
-        const tarefaLi = link.closest('li');
+        const tarefaLi = link.closest('li'); //Pega o elemento li mais próximo do botão clicado.
 
-        if (tarefaLi) {
-            tarefaLi.classList.add('removendo');
-            setTimeout(() => {
-                tarefas.splice(indice, 1);
-                salvarTarefasNoStorage();
-                listaTarefas.innerHTML = '';
-                exibirTodasAsTarefas();
-                console.log(tarefas);
-            }, 400)
+        if (tarefaLi) { //Verifica se o elemento li existe.
+            tarefaLi.classList.add('removendo'); //Adiciona a classe 'removendo'.
+            setTimeout(() => { //Define o time em que a tarefa será excluída.
+                tarefas.splice(indice, 1); //Remove a tarefa do array usando o indice de base.
+                salvarTarefasNoStorage();  //Salva as alterações feitas.
+                listaTarefas.innerHTML = ''; //Limpa a lista de tarefas do HTML.
+                exibirTodasAsTarefas(); //Exibe novamente as tarefas (atualizadas).
+                console.log(tarefas); //Log das tarefas.
+            }, 400) //Define o tempo de remoção da tarefa em 400ms.
         }
     });
 

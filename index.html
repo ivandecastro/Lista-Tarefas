@@ -13,26 +13,45 @@
     <div class="container">
         <h1>Lista de Tarefas com Prioridades</h1>
         <input type="text" id="task-input" placeholder="Adicione uma nova tarefa">
+
         <select id="priority-input">
             <option value="Baixa">Baixa</option>
             <option value="Média">Média</option>
             <option value="Alta">Alta</option>
         </select>
+
         <div class="button-wrapper">
             <button id="addTaskButton" onclick="adicionar()">Adicionar Tarefa</button>
             <button id="clearButton" onclick="limparTarefas()">Limpar Tarefas</button>
         </div>
+
+        <div class="top-bar">
+            <div class="marca-dagua">
+                <label for="estiloMarcaDagua">Estilo da Marca d'Água:</label>
+                <select id="estiloMarcaDagua">
+                    <option value="canto">Canto Superior Direito</option>
+                    <option value="centro">Central (Marca d'água)</option>
+                    <option value="nenhum">Sem Marca d'água</option>
+                </select>
+            </div>
+
+            <div class="filtro" id="filtros">
+                <select id="filtroStatus">
+                    <option value="pendente">Status Pendente</option>
+                    <option value="completa">Status Completa</option>
+                </select>
+                <select id="filtroPrioridade">
+                    <option value="baixo">Baixa Prioridade</option>
+                    <option value="medio">Média Prioridade</option>
+                    <option value="alta">Alta Prioridade</option>
+                </select>
+                <input type="text" id="filtroTexto" placeholder="Buscar por descrição" />
+            </div>
+        </div>
+
         <div class="task-list-container">
             <ul id="task-list"></ul>
         </div>
-    </div>
-    <div class="marca-dagua">
-        <label for="estiloMarcaDagua">Estilo da Marca d'Água:</label>
-        <select id="estiloMarcaDagua">
-            <option value="canto">Canto Superior Direito</option>
-            <option value="centro">Central (Marca d'água)</option>
-            <option value="nenhum">Sem Marca d'água</option>
-        </select>
     </div>
 </body>
 
