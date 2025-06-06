@@ -239,13 +239,22 @@ const limparTarefas = () => { //Função para limpar todas as tarefas da lista.
         return;
     }
     //Solicita confirmação do usuário antes de limpar as tarefas.
-    const confirm = window.confirm("Você tem certeza que deseja limpar todas as tarefas?");
-    if (confirm) { //Se o usuário confirmar, limpa as tarefas.
-        tarefas.length = 0; //Limpa o array de tarefas.
-        salvarTarefasNoStorage(); //Atualiza o localStorage.
-        lista.innerHTML = ''; //Limpa a lista visual.
-        input.value = ''; //Limpa o campo de entrada após adicionar a tarefa.
-    }
+    const confirmacao = window.confirm("Você tem certeza que deseja limpar todas as tarefas?");
+    if (!confirmacao) return;
+
+    const itens = lista.querySelectorAll('li'); //Pega todos os <li> da lista.
+
+    itens.forEach(li => {
+        li.classList.add('removendo'); //Aplica a animação de remoção.
+    });
+
+    //Espera a animação acabar antes de limpar.
+    setTimeout(() => {
+        tarefas.length = 0; //Limpa o array.
+        salvarTarefasNoStorage(); //Atualiza o loczalStorage.
+        lista.innerHTML = ''; //Limpa visualmente.
+        input.value = ''; //Limpa o campo de entrada.
+    }, 350); //Duração igual à da animação CSS.
 };
 //#endregion Limpeza de Tarefas}
 
