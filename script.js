@@ -31,7 +31,7 @@ const informacoes = () => { //Coleta as informações dos elementos HTML necess�
 
 const eventMarcaDagua = () => { // Permite que a marca d'água seja selecionada para todos os itens em conjunto.
     //Evento para a troca do estilo da marca d'água.
-    document.getElementById('estiloMarcaDagua').addEventListener('change', (e) => { 
+    document.getElementById('estiloMarcaDagua').addEventListener('change', (e) => {
 
         const novoEstilo = e.target.value; //Pega qual será o novo estilo selecionado.
         localStorage.setItem('estiloMarcaDagua', novoEstilo); //Salva o estilo no localStorage.
@@ -70,14 +70,23 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
     const [, , listaTarefas] = informacoes(); //Coleta a lista de tarefas para poder remover o item da lista HTML.
 
     link.addEventListener("click", (event) => { //Adiciona um evento de clique ao botão.
-        event.preventDefault(); //Previne o comportamento padrão do botão.
+        let confirm = window.confirm('Você tem certeza que deseja remover esta tarefa?');
 
-        tarefas.splice(indice, 1); //Remove a tarefa do array (usando o índice correto via texto ou alguma outra marca).
-        salvarTarefasNoStorage(); //Salva as alterações no localStorage.
+        while (confirm) { 
+            if (!confirm) {
+                break;
+            }
 
-        listaTarefas.innerHTML = ''; //Limpa a lista de tarefas visualmente.
-        exibirTodasAsTarefas() //Mostra as tarefas, agora atualizadas.
-        console.log(tarefas); //Log das tarefas. 
+            event.preventDefault(); //Previne o comportamento padrão do botão.
+
+            tarefas.splice(indice, 1); //Remove a tarefa do array (usando o índice correto via texto ou alguma outra marca).
+            salvarTarefasNoStorage(); //Salva as alterações no localStorage.
+
+            listaTarefas.innerHTML = ''; //Limpa a lista de tarefas visualmente.
+            exibirTodasAsTarefas() //Mostra as tarefas, agora atualizadas.
+            console.log(tarefas); //Log das tarefas.
+            break;
+        }
     });
 
     return link;
@@ -166,7 +175,7 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista.
     const [inputTarefa, prioridadeValue] = informacoes();
 
     if (inputTarefa.value === "") { //Verifica se o campo de tarefa está vazio.
-        alert("Digite uma tarefa!"); 
+        alert("Digite uma tarefa!");
         return;
     }
 
@@ -189,7 +198,7 @@ const exibirTarefaDoIndice = (indice) => {
     novaTarefa.className = 'text-list'; //Criando uma ClassName para a tag 'li'.
 
     //Decidido o atributo que adicionará as prioridade.
-    novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`); 
+    novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`);
 
     definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade.
     aplicarEstiloMarcaDagua(novaTarefa); //Aplica o estilo da marca d'água, e onde será exibida.
