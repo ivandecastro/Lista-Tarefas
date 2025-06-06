@@ -11,7 +11,7 @@ body {
   overflow: hidden;
   padding: 0;
 }
-      
+
 .container {
   text-align: center;
   background: none;
@@ -63,7 +63,7 @@ h1 {
   bottom: 510px;
   justify-content: left;
   grid-auto-rows: 100px;
-  grid-gap: 90px 30px;    
+  grid-gap: 90px 30px;
 }
 
 .marca-canto::after {
@@ -72,7 +72,8 @@ h1 {
   top: 8px;
   right: 12px;
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.5); /* Cor clara, tipo sombra */
+  color: rgba(0, 0, 0, 0.5);
+  /* Cor clara, tipo sombra */
   font-weight: bold;
   text-transform: uppercase;
   pointer-events: none;
@@ -246,4 +247,26 @@ select option {
   background: #fafbfc;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   padding: 1px 0px;
+}
+
+@keyframes desaparecer {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    height: auto;
+    margin: 10px 0;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+    height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.removendo {
+  animation: desaparecer 0.4s ease-out forwards;
+  overflow: hidden;
 }

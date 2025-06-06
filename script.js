@@ -71,26 +71,28 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
 
     link.addEventListener("click", (event) => { //Adiciona um evento de clique ao botão.
         let confirm = window.confirm('Você tem certeza que deseja remover esta tarefa?');
+        if (!confirm) return;
 
-        while (confirm) { 
-            if (!confirm) {
-                break;
-            }
+        event.preventDefault(); //Previne o comportamento padrão do botão.
 
-            event.preventDefault(); //Previne o comportamento padrão do botão.
+        const tarefaLi = link.closest('li');
 
-            tarefas.splice(indice, 1); //Remove a tarefa do array (usando o índice correto via texto ou alguma outra marca).
-            salvarTarefasNoStorage(); //Salva as alterações no localStorage.
-
-            listaTarefas.innerHTML = ''; //Limpa a lista de tarefas visualmente.
-            exibirTodasAsTarefas() //Mostra as tarefas, agora atualizadas.
-            console.log(tarefas); //Log das tarefas.
-            break;
+        if (tarefaLi) {
+            tarefaLi.classList.add('removendo');
+            setTimeout(() => {
+                tarefas.splice(indice, 1);
+                salvarTarefasNoStorage();
+                listaTarefas.innerHTML = '';
+                exibirTodasAsTarefas();
+                console.log(tarefas);
+            }, 400)
         }
     });
 
     return link;
 };
+
+
 
 const botaoConfirmar = (indice) => { //Cria um botão para confirmar a conclusão de uma tarefa específica.
     const link = document.createElement('button'); //Cria um elemento de botão.
