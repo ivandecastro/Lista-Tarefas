@@ -62,6 +62,47 @@ inputEnter();
 //----------------------------------------------------
 //#region Botões de Ação
 
+const filtro = () => {
+    const priorityFilter = document.getElementById('filtroPrioridade');
+    const statusFilter = document.getElementById('filtroStatus');
+
+
+    statusFilter.addEventListener('change', (e) => {
+        const elementosLi = document.querySelectorAll('#task-list li');
+        const filtro = e.target.value;
+
+        elementosLi.forEach(tarefaLi => {
+            const indice = parseInt(tarefaLi.dataset.indice);
+            const tarefa = tarefas[indice];
+
+            const concluida = tarefa.concluida;
+
+            if (filtro === '' || (filtro === 'pendente' && !concluida) || (filtro === 'completa' && concluida)) {
+                tarefaLi.style.display = '';
+            } else {
+                tarefaLi.style.display = 'none';
+            }
+        })
+    })
+
+    priorityFilter.addEventListener('change', (e) => {
+        const tarefas = document.querySelectorAll('#task-list li'); //Pega cada elemento da lista.
+
+        tarefas.forEach(tarefa => {
+            const filtrar = e.target.value;
+            const prioridade = tarefa.dataset.prioridade;
+
+            if (filtrar === '' || prioridade === filtrar) {
+                tarefa.style.display = ''; // ou 'flex' se for um layout flexível
+            } else {
+                tarefa.style.display = 'none';
+            }
+        });
+
+    })
+}
+filtro();
+
 const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa específica do array de tarefas.
     const link = document.createElement('button'); //Cria um elemento de botão.
     link.textContent = "REMOVER"; //Define o texto do botão.
@@ -139,6 +180,7 @@ const definirCorDaPrioridade = (elemento, prioridade) => { //Define qual a cor d
 
 const aplicarEstiloBotaoConfirmar = (botao, permitido) => { //Aplica estilos ao botão de confirmar tarefa.
     botao.className = 'btn-confirmar'; // sempre aplica a classe base
+    botao.id = 'button-cofirm';
 
     if (permitido) { //Altera o estilo do botão, para diferenciar das tarefas concluidas para as inconcluídas.
         botao.textContent = 'COMPLETA'; //Coloca o texto do botão como "COMPLETA".
@@ -201,6 +243,7 @@ const exibirTarefaDoIndice = (indice) => {
 
     //Decidido o atributo que adicionará as prioridade.
     novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`);
+    novaTarefa.setAttribute('data-indice', indice);
 
     definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade.
     aplicarEstiloMarcaDagua(novaTarefa); //Aplica o estilo da marca d'água, e onde será exibida.
