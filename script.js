@@ -62,46 +62,36 @@ inputEnter();
 //----------------------------------------------------
 //#region Botões de Ação
 
-const filtro = () => {
-    const priorityFilter = document.getElementById('filtroPrioridade');
-    const statusFilter = document.getElementById('filtroStatus');
+function filtrarTarefas() {
+    const statusValue = document.getElementById('filtroStatus').value;
+    const prioridadeValue = document.getElementById('filtroPrioridade').value;
 
+    const elementosLi = document.querySelectorAll('#task-list li');
 
-    statusFilter.addEventListener('change', (e) => {
-        const elementosLi = document.querySelectorAll('#task-list li');
-        const filtro = e.target.value;
+    elementosLi.forEach(tarefaLi => {
+        const indice = parseInt(tarefaLi.dataset.indice);
+        const prioridade = tarefaLi.dataset.prioridade;
+        const tarefa = tarefas[indice];
 
-        elementosLi.forEach(tarefaLi => {
-            const indice = parseInt(tarefaLi.dataset.indice);
-            const tarefa = tarefas[indice];
+        const bateStatus = 
+            statusValue === '' || 
+            (statusValue === 'completa' && tarefa.concluida) ||
+            (statusValue === 'pendente' && !tarefa.concluida);
 
-            const concluida = tarefa.concluida;
+        const batePrioridade = 
+            prioridadeValue === '' || 
+            prioridadeValue === prioridade;
 
-            if (filtro === '' || (filtro === 'pendente' && !concluida) || (filtro === 'completa' && concluida)) {
-                tarefaLi.style.display = '';
-            } else {
-                tarefaLi.style.display = 'none';
-            }
-        })
-    })
-
-    priorityFilter.addEventListener('change', (e) => {
-        const tarefas = document.querySelectorAll('#task-list li'); //Pega cada elemento da lista.
-
-        tarefas.forEach(tarefa => {
-            const filtrar = e.target.value;
-            const prioridade = tarefa.dataset.prioridade;
-
-            if (filtrar === '' || prioridade === filtrar) {
-                tarefa.style.display = ''; // ou 'flex' se for um layout flexível
-            } else {
-                tarefa.style.display = 'none';
-            }
-        });
-
-    })
+        if (bateStatus && batePrioridade) {
+            tarefaLi.style.display = '';
+        } else {
+            tarefaLi.style.display = 'none';
+        }
+    });
 }
-filtro();
+
+document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas);
+document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas);
 
 const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa específica do array de tarefas.
     const link = document.createElement('button'); //Cria um elemento de botão.
@@ -297,7 +287,7 @@ const limparTarefas = () => { //Função para limpar todas as tarefas da lista.
         salvarTarefasNoStorage(); //Atualiza o loczalStorage.
         lista.innerHTML = ''; //Limpa visualmente.
         input.value = ''; //Limpa o campo de entrada.
-    }, 350); //Duração igual à da animação CSS.
+    }, 400); //Duração igual à da animação CSS.
 };
 //#endregion Limpeza de Tarefas}
 
