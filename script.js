@@ -65,7 +65,6 @@ inputEnter();
 function filtrarTarefas() {
     const statusValue = document.getElementById('filtroStatus').value;
     const prioridadeValue = document.getElementById('filtroPrioridade').value;
-
     const elementosLi = document.querySelectorAll('#task-list li');
 
     elementosLi.forEach(tarefaLi => {
@@ -73,13 +72,13 @@ function filtrarTarefas() {
         const prioridade = tarefaLi.dataset.prioridade;
         const tarefa = tarefas[indice];
 
-        const bateStatus = 
-            statusValue === '' || 
+        const bateStatus =
+            statusValue === '' ||
             (statusValue === 'completa' && tarefa.concluida) ||
             (statusValue === 'pendente' && !tarefa.concluida);
 
-        const batePrioridade = 
-            prioridadeValue === '' || 
+        const batePrioridade =
+            prioridadeValue === '' ||
             prioridadeValue === prioridade;
 
         if (bateStatus && batePrioridade) {
@@ -89,6 +88,22 @@ function filtrarTarefas() {
         }
     });
 }
+
+document.getElementById('filtroTexto').addEventListener('input', () => {
+    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
+    const elementosLi = document.querySelectorAll('#task-list li');
+
+    elementosLi.forEach(tarefaLi => {
+        const textoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase();
+        const filtroData = tarefaLi.textContent.split('-')[1].trim();
+
+        if (textoDaTarefa.includes(filtroTexto) || filtroData.includes(filtroTexto)) {
+            tarefaLi.style.display = '';
+        } else {
+            tarefaLi.style.display = 'none';
+        }
+    });
+});
 
 document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas);
 document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas);
