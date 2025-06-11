@@ -65,12 +65,15 @@ inputEnter();
 function filtrarTarefas() {
     const statusValue = document.getElementById('filtroStatus').value;
     const prioridadeValue = document.getElementById('filtroPrioridade').value;
+    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
     const elementosLi = document.querySelectorAll('#task-list li');
 
     elementosLi.forEach(tarefaLi => {
         const indice = parseInt(tarefaLi.dataset.indice);
-        const prioridade = tarefaLi.dataset.prioridade;
         const tarefa = tarefas[indice];
+        const prioridade = tarefaLi.dataset.prioridade;
+        const textoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase();
+        const filtroData = tarefaLi.textContent.split('-')[1].split(':')[1].trim();
 
         const bateStatus =
             statusValue === '' ||
@@ -81,7 +84,10 @@ function filtrarTarefas() {
             prioridadeValue === '' ||
             prioridadeValue === prioridade;
 
-        if (bateStatus && batePrioridade) {
+            const bateTexto = textoDaTarefa.includes(filtroTexto) ||
+            filtroData.includes(filtroTexto);
+
+        if (bateStatus && batePrioridade && bateTexto) {
             tarefaLi.style.display = '';
         } else {
             tarefaLi.style.display = 'none';
@@ -89,22 +95,7 @@ function filtrarTarefas() {
     });
 }
 
-document.getElementById('filtroTexto').addEventListener('input', () => {
-    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
-    const elementosLi = document.querySelectorAll('#task-list li');
-
-    elementosLi.forEach(tarefaLi => {
-        const textoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase();
-        const filtroData = tarefaLi.textContent.split('-')[1].trim();
-
-        if (textoDaTarefa.includes(filtroTexto) || filtroData.includes(filtroTexto)) {
-            tarefaLi.style.display = '';
-        } else {
-            tarefaLi.style.display = 'none';
-        }
-    });
-});
-
+document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas);
 document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas);
 document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas);
 
