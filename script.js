@@ -100,25 +100,26 @@ function filtrarTarefas() {
 }
 
 const verificarFiltrosAtivos = () => {
-    const statusValue = document.getElementById('filtroStatus').value;
-    const prioridadeValue = document.getElementById('filtroPrioridade').value;
-    const filtroTexto = document.getElementById('filtroTexto').value;
+    const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status selecionado.
+    const prioridadeValue = document.getElementById('filtroPrioridade').value; //Pega o valor da prioridade selecionada.
+    const filtroTexto = document.getElementById('filtroTexto').value; //Pega o valor do texto digitado no filtro.
 
-    return statusValue || prioridadeValue || filtroTexto;
+    return statusValue || prioridadeValue || filtroTexto; //Verifica se algum filtro está ativo.
 }
 
-const atualizarMensagemFiltro = () => {
+const atualizarMensagemFiltro = () => { //Atualiza a mensagem de filtro com base nos filtros ativos.
     const mensagem = document.getElementById('mensagemFiltro');
     if (verificarFiltrosAtivos()) {
-        mensagem.style.display = 'block';
+        mensagem.style.display = 'block'; //Exibe a mensagem de filtro se algum filtro estiver ativo.
     } else {
-        mensagem.style.display = 'none';
+        mensagem.style.display = 'none'; //Esconde a mensagem de filtro se nenhum filtro estiver ativo.
     }
 }
 
-document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas);
-document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas);
-document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas);
+//Adiciona eventos de input e change para os filtros, chamando a função de filtragem.
+document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas); 
+document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas); 
+document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas); 
 
 const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa específica do array de tarefas.
     const link = document.createElement('button'); //Cria um elemento de botão.
