@@ -1,7 +1,7 @@
 //#region {Variáveis Globais
 const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []; //Array dos alunos.
 
-// Se não houver tarefas no localStorage, inicializa com um array vazio.
+//Se não houver tarefas no localStorage, inicializa com um array vazio.
 const salvarTarefasNoStorage = () => localStorage.setItem('tarefas', JSON.stringify(tarefas));
 
 //#endregion Variáveis Globais}
@@ -63,34 +63,36 @@ inputEnter();
 //#region Botões de Ação
 
 function filtrarTarefas() {
-    const statusValue = document.getElementById('filtroStatus').value;
-    const prioridadeValue = document.getElementById('filtroPrioridade').value;
-    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
-    const elementosLi = document.querySelectorAll('#task-list li');
+    const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status que será filtrado.
+    const prioridadeValue = document.getElementById('filtroPrioridade').value; //Pega o valor da prioridade que será filtrado.
+    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase(); //Pega o valor do texto que será filtrado.
+    const elementosLi = document.querySelectorAll('#task-list li'); //Pega a lista de tarefas
+   
+    elementosLi.forEach(tarefaLi => { //Analisa cada tarefa individualmente.
+        const indice = parseInt(tarefaLi.dataset.indice); //Pega o indice da tarefa no "elementosLi" e o pega no indice.
+        const tarefa = tarefas[indice]; //Pega a tarefa do array tarefas específica de acordo com a tarefa na tag Li.
+        const prioridade = tarefaLi.dataset.prioridade; //Pega o valor da prioridade em cada tarefa na tag Li.
+        const descricaoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
+        const dataDaTarefa = tarefaLi.textContent.split('-')[1].split(':')[1].trim(); //Pega apenas a data da tarefa.
 
-    elementosLi.forEach(tarefaLi => {
-        const indice = parseInt(tarefaLi.dataset.indice);
-        const tarefa = tarefas[indice];
-        const prioridade = tarefaLi.dataset.prioridade;
-        const textoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase();
-        const filtroData = tarefaLi.textContent.split('-')[1].split(':')[1].trim();
-
-        const bateStatus =
+        const bateStatus = //Cria as condições da filtragem por Status.
             statusValue === '' ||
             (statusValue === 'completa' && tarefa.concluida) ||
             (statusValue === 'pendente' && !tarefa.concluida);
 
-        const batePrioridade =
+        const batePrioridade = //Cria as condições da filtragem por Prioridade.
             prioridadeValue === '' ||
             prioridadeValue === prioridade;
 
-            const bateTexto = textoDaTarefa.includes(filtroTexto) ||
-            filtroData.includes(filtroTexto);
+            const bateDescricaoEData = //Cria as condições da filtragem por Descrição. 
+            descricaoDaTarefa.includes(filtroTexto) ||
+            dataDaTarefa.includes(filtroTexto);
 
-        if (bateStatus && batePrioridade && bateTexto) {
-            tarefaLi.style.display = '';
+        if (bateStatus && batePrioridade && bateDescricaoEData) { //Verifica se a tarefa atende a todos os critérios de filtragem.
+            tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
+             
         } else {
-            tarefaLi.style.display = 'none';
+            tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
         }
     });
 }
@@ -128,8 +130,6 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
 
     return link;
 };
-
-
 
 const botaoConfirmar = (indice) => { //Cria um botão para confirmar a conclusão de uma tarefa específica.
     const link = document.createElement('button'); //Cria um elemento de botão.
