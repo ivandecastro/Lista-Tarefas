@@ -67,7 +67,7 @@ function filtrarTarefas() {
     const prioridadeValue = document.getElementById('filtroPrioridade').value; //Pega o valor da prioridade que será filtrado.
     const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase(); //Pega o valor do texto que será filtrado.
     const elementosLi = document.querySelectorAll('#task-list li'); //Pega a lista de tarefas
-   
+
     elementosLi.forEach(tarefaLi => { //Analisa cada tarefa individualmente.
         const indice = parseInt(tarefaLi.dataset.indice); //Pega o indice da tarefa no "elementosLi" e o pega no indice.
         const tarefa = tarefas[indice]; //Pega a tarefa do array tarefas específica de acordo com a tarefa na tag Li.
@@ -84,17 +84,36 @@ function filtrarTarefas() {
             prioridadeValue === '' ||
             prioridadeValue === prioridade;
 
-            const bateDescricaoEData = //Cria as condições da filtragem por Descrição. 
+        const bateDescricaoEData = //Cria as condições da filtragem por Descrição. 
             descricaoDaTarefa.includes(filtroTexto) ||
             dataDaTarefa.includes(filtroTexto);
 
+        atualizarMensagemFiltro();
+
         if (bateStatus && batePrioridade && bateDescricaoEData) { //Verifica se a tarefa atende a todos os critérios de filtragem.
             tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
-             
+
         } else {
             tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
         }
     });
+}
+
+const verificarFiltrosAtivos = () => {
+    const statusValue = document.getElementById('filtroStatus').value;
+    const prioridadeValue = document.getElementById('filtroPrioridade').value;
+    const filtroTexto = document.getElementById('filtroTexto').value;
+
+    return statusValue || prioridadeValue || filtroTexto;
+}
+
+const atualizarMensagemFiltro = () => {
+    const mensagem = document.getElementById('mensagemFiltro');
+    if (verificarFiltrosAtivos()) {
+        mensagem.style.display = 'block';
+    } else {
+        mensagem.style.display = 'none';
+    }
 }
 
 document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas);
@@ -123,6 +142,7 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
                 salvarTarefasNoStorage();  //Salva as alterações feitas.
                 listaTarefas.innerHTML = ''; //Limpa a lista de tarefas do HTML.
                 exibirTodasAsTarefas(); //Exibe novamente as tarefas (atualizadas).
+                filtrarTarefas(); //Chama a função de filtragem para atualizar a exibição.
                 console.log(tarefas); //Log das tarefas.
             }, 400) //Define o tempo de remoção da tarefa em 400ms.
         }
@@ -137,11 +157,11 @@ const botaoConfirmar = (indice) => { //Cria um botão para confirmar a conclusã
     let permitido = tarefas[indice].concluida; //Define o status inicial com base na tarefa armazenada.
     aplicarEstiloBotaoConfirmar(link, permitido); //Aplica os estilos ao botão de confirmar.
 
-    link.addEventListener("click", () => { //Adiciona um evento de clique ao botão.
+    link.addEventListener("click", (e) => { //Adiciona um evento de clique ao botão.
         permitido = !permitido; //Inverte o estado de conclusão da tarefa.
 
-
         tarefas[indice].concluida = permitido; //Atualiza o objeto no array com base no novo estado.
+        filtrarTarefas();
         salvarTarefasNoStorage(); //Salva as alterações no localStorage.
         aplicarEstiloBotaoConfirmar(link, permitido, 'COMPLETA', 'PENDENTE'); //Aplica o estilo atualizado ao botão.
     });
@@ -222,6 +242,7 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista.
     adicionarTarefa(inputTarefa.value, prioridadeValue, false); //Vai pegar as informações e adicionar ao array.
 
     exibirTarefaDoIndice(tarefas.length - 1); //Adiciona a tarefa ao array e exibe na lista.
+    filtrarTarefas(); //Chama a função de filtragem para atualizar a exibição.
     inputTarefa.value = ''; //Limpa o campo de entrada após adicionar a tarefa.
     console.log(tarefas); //Log das tarefas.
 };
