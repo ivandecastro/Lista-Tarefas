@@ -25,7 +25,9 @@ const exibirTodasAsTarefas = () => { //Itera sobre o array de tarefas e exibe ca
 const informacoes = () => { //Coleta as informações dos elementos HTML necessários para adicionar uma tarefa.
     const inputTarefa = document.getElementById('task-input'); //Coleta o input de tarefa.
     const prioridadeValue = document.getElementById('priority-input').value; //Coleta o valor da prioridade selecionada.
-    const tasksList = document.getElementById("task-list"); //Coleta a lista de tarefas onde as novas tarefas serão exibidas.
+
+    //Coleta a lista de tarefas onde as novas tarefas serão exibidas.
+    const tasksList = document.getElementById("task-list"); 
     return [inputTarefa, prioridadeValue, tasksList]; //Retorna os valores.
 };
 
@@ -64,16 +66,30 @@ inputEnter();
 
 function filtrarTarefas() {
     const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status que será filtrado.
-    const prioridadeValue = document.getElementById('filtroPrioridade').value; //Pega o valor da prioridade que será filtrado.
-    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase(); //Pega o valor do texto que será filtrado.
+    
+    //Pega o valor da prioridade que será filtrado.
+    const prioridadeValue = document.getElementById('filtroPrioridade').value;
+
+    //Pega o valor do texto que será filtrado.
+    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase(); 
+    
     const elementosLi = document.querySelectorAll('#task-list li'); //Pega a lista de tarefas
+    let algumaVisivel = false;
 
     elementosLi.forEach(tarefaLi => { //Analisa cada tarefa individualmente.
         const indice = parseInt(tarefaLi.dataset.indice); //Pega o indice da tarefa no "elementosLi" e o pega no indice.
+        if (isNaN(indice)) return; //Pula se não for uma tarefa válida
+
         const tarefa = tarefas[indice]; //Pega a tarefa do array tarefas específica de acordo com a tarefa na tag Li.
+        if (!tarefa) return;
+
         const prioridade = tarefaLi.dataset.prioridade; //Pega o valor da prioridade em cada tarefa na tag Li.
-        const descricaoDaTarefa = tarefaLi.textContent.split('-')[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
-        const dataDaTarefa = tarefaLi.textContent.split('-')[1].split(':')[1].trim(); //Pega apenas a data da tarefa.
+        //Separa a descrição da tarefa e a data, caso exista.
+        const partes = tarefaLi.textContent.split('-');
+        const descricaoDaTarefa = partes[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
+        //Verifica se a tarefa possui data, caso não tenha, atribui uma string vazia.
+        const temData = partes.length > 1 && partes[1].includes(':');
+        const dataDaTarefa = temData ? partes[1].split(':')[1].trim() : ''; //Pega apenas a data da tarefa.
 
         const bateStatus = //Cria as condições da filtragem por Status.
             statusValue === '' ||
@@ -88,15 +104,35 @@ function filtrarTarefas() {
             descricaoDaTarefa.includes(filtroTexto) ||
             dataDaTarefa.includes(filtroTexto);
 
-        atualizarMensagemFiltro();
+        atualizarMensagemFiltro(); //Atualiza a mensagem de filtro com base nos filtros ativos.
 
-        if (bateStatus && batePrioridade && bateDescricaoEData) { //Verifica se a tarefa atende a todos os critérios de filtragem.
+        //Verifica se a tarefa atende a todos os critérios de filtragem.
+        if (bateStatus && batePrioridade && bateDescricaoEData) { 
             tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
-
+            algumaVisivel = true; //Define que pelo menos uma tarefa está visível.
         } else {
             tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
         }
     });
+
+    alertaFiltro(algumaVisivel); //Chama a função de alerta para mostrar ou esconder a mensagem de filtro.
+    atualizarMensagemFiltro(); //Atualiza a mensagem de filtro com base nos filtros ativos.
+}
+
+const alertaFiltro = (algumaVisivel) => {
+    let aviso = document.getElementById('aviso-filtro'); //Pega o elemento de aviso, caso exista.
+    if (!aviso) { //Verifica se o aviso já existe, caso não exista, cria um novo elemento de aviso.
+        aviso = document.createElement('li');
+        aviso.id = 'aviso-filtro';
+        aviso.style.textAlign = 'left';
+        aviso.style.color = '#888';
+        aviso.style.fontStyle = 'italic';
+        aviso.style.fontSize = '1.5rem';
+        document.getElementById('task-list').appendChild(aviso);
+    }
+    aviso.textContent = 'Nenhuma tarefa encontrada.';
+
+    aviso.style.display = algumaVisivel ? 'none' : '';
 }
 
 const verificarFiltrosAtivos = () => {
@@ -117,9 +153,9 @@ const atualizarMensagemFiltro = () => { //Atualiza a mensagem de filtro com base
 }
 
 //Adiciona eventos de input e change para os filtros, chamando a função de filtragem.
-document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas); 
-document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas); 
-document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas); 
+document.getElementById('filtroTexto').addEventListener('input', filtrarTarefas);
+document.getElementById('filtroStatus').addEventListener('change', filtrarTarefas);
+document.getElementById('filtroPrioridade').addEventListener('change', filtrarTarefas);
 
 const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa específica do array de tarefas.
     const link = document.createElement('button'); //Cria um elemento de botão.
