@@ -264,19 +264,14 @@ select option {
 }
 
 @keyframes desaparecer {
-  0% {
+  from {
     opacity: 1;
-    transform: scale(1);
-    height: auto;
-    margin: 10px 0;
+    transform: translateY(0px);
   }
 
-  100% {
+  to {
     opacity: 0;
-    transform: scale(0.95);
-    height: 0;
-    margin: 0;
-    padding: 0;
+    transform: translateY(-10px);
   }
 }
 
@@ -285,24 +280,18 @@ select option {
   overflow: hidden;
 }
 
-@keyframes aparecendo {
-  
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-    height: 0;
-    padding: 0;
-    margin: 0px 0;
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-    height: auto;
-    margin: 10px 0;
-  }
+.aparecendo {
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.aparecendo {
-  animation: aparecendo 0.6s ease-out forwards;
-  overflow: hidden;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

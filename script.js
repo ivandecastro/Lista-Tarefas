@@ -13,10 +13,10 @@ const salvarTarefasNoStorage = () => localStorage.setItem('tarefas', JSON.string
 //#region Utilitários
 const dataAtual = () => { //Formata a data atual para o padrão "dd/mm/aaaa - hh:mm:ss".
     const agora = new Date(); //Cria um novo objeto Date com a data e hora atuais.
-    return agora.toLocaleDateString() + ' - ' + agora.toLocaleTimeString();
+    return `[${agora.toLocaleDateString()} - ${agora.toLocaleTimeString()}]`;
 };
 
-const exibirTodasAsTarefas = () => { //Itera sobre o array de tarefas e exibe cada uma delas.
+const exibirTodasAsTarefas = () => { //Exibe todas as tarefas armazenadas no array de tarefas.
     for (let i = 0; i < tarefas.length; i++) {
         exibirTarefaDoIndice(i);
     }
@@ -88,8 +88,8 @@ function filtrarTarefas() {
         const partes = tarefaLi.textContent.split('-'); //Separa a descrição da tarefa e a data, caso exista.
         const descricaoDaTarefa = partes[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
         //Verifica se a tarefa possui data, caso não tenha, atribui uma string vazia.
-        const temData = partes.length > 1 && partes[1].includes(':'); //Verifica se a tarefa possui data.
-        const dataDaTarefa = temData ? partes[1].split(':')[1].trim() : ''; //Pega apenas a data da tarefa.
+        const temData = partes.length > 1 && partes[1].includes('['); //Verifica se a tarefa possui data.
+        const dataDaTarefa = temData ? partes[1].split(' [')[1].trim() : ''; //Pega apenas a data da tarefa.
 
         const bateStatus = //Cria as condições da filtragem por Status.
             statusValue === '' ||
@@ -140,7 +140,19 @@ const alertaFiltro = (algumaVisivel) => {
     }
     aviso.textContent = 'Nenhuma tarefa encontrada.';
 
-    aviso.style.display = algumaVisivel ? 'none' : '';
+    if (algumaVisivel === true) {
+        aviso.classList.add('removendo');
+        aviso.classList.remove('aparecendo');
+        setTimeout(() => {
+            aviso.style.display = 'none'; //Esconde o aviso caso haja tarefas visíveis.
+        }, 600);
+    } else {
+        aviso.classList.add('aparecendo');
+         aviso.classList.remove('removendo');
+         setTimeout(() => {
+            aviso.style.display = ''; //Exibe o aviso caso não haja tarefas visíveis.
+         }, 600);
+    }
 }
 
 const verificarFiltrosAtivos = () => {
@@ -309,7 +321,8 @@ const exibirTarefaDoIndice = (indice) => {
     const [, , listaTarefas] = informacoes();
 
     const novaTarefa = document.createElement("li"); //Cria um novo elemento de lista para a tarefa.
-    novaTarefa.className = 'text-list'; //Criando uma ClassName para a tag 'li'.
+    novaTarefa.classList.add('aparecendo'); // aplica a animação
+    novaTarefa.classList.add('text-list'); //Criando uma ClassName para a tag 'li'.
 
     //Decidido o atributo que adicionará as prioridade.
     novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`);
@@ -319,7 +332,7 @@ const exibirTarefaDoIndice = (indice) => {
     aplicarEstiloMarcaDagua(novaTarefa); //Aplica o estilo da marca d'água, e onde será exibida.
 
     const texto = document.createElement("span"); //Cria um elemento de texto para exibir a descrição da tarefa.
-    texto.textContent = `${descricao} - Data: ${data}`; //Define o texto da tarefa com as informações coletadas.
+    texto.textContent = `${descricao} - ${data}`; //Define o texto da tarefa com as informações coletadas.
 
     const containerBotoes = document.createElement("div"); //Cria um contêiner para os botões de ação.
     containerBotoes.style.display = "flex"; //Define o display do contêiner como flexível.
