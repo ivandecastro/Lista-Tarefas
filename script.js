@@ -27,7 +27,7 @@ const informacoes = () => { //Coleta as informações dos elementos HTML necess�
     const prioridadeValue = document.getElementById('priority-input').value; //Coleta o valor da prioridade selecionada.
 
     //Coleta a lista de tarefas onde as novas tarefas serão exibidas.
-    const tasksList = document.getElementById("task-list"); 
+    const tasksList = document.getElementById("task-list");
     return [inputTarefa, prioridadeValue, tasksList]; //Retorna os valores.
 };
 
@@ -66,13 +66,13 @@ inputEnter();
 
 function filtrarTarefas() {
     const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status que será filtrado.
-    
+
     //Pega o valor da prioridade que será filtrado.
     const prioridadeValue = document.getElementById('filtroPrioridade').value;
 
     //Pega o valor do texto que será filtrado.
-    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase(); 
-    
+    const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
+
     const elementosLi = document.querySelectorAll('#task-list li'); //Pega a lista de tarefas
     let algumaVisivel = false;
 
@@ -85,10 +85,10 @@ function filtrarTarefas() {
 
         const prioridade = tarefaLi.dataset.prioridade; //Pega o valor da prioridade em cada tarefa na tag Li.
         //Separa a descrição da tarefa e a data, caso exista.
-        const partes = tarefaLi.textContent.split('-');
+        const partes = tarefaLi.textContent.split('-'); //Separa a descrição da tarefa e a data, caso exista.
         const descricaoDaTarefa = partes[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
         //Verifica se a tarefa possui data, caso não tenha, atribui uma string vazia.
-        const temData = partes.length > 1 && partes[1].includes(':');
+        const temData = partes.length > 1 && partes[1].includes(':'); //Verifica se a tarefa possui data.
         const dataDaTarefa = temData ? partes[1].split(':')[1].trim() : ''; //Pega apenas a data da tarefa.
 
         const bateStatus = //Cria as condições da filtragem por Status.
@@ -107,11 +107,19 @@ function filtrarTarefas() {
         atualizarMensagemFiltro(); //Atualiza a mensagem de filtro com base nos filtros ativos.
 
         //Verifica se a tarefa atende a todos os critérios de filtragem.
-        if (bateStatus && batePrioridade && bateDescricaoEData) { 
-            tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
+        if (bateStatus && batePrioridade && bateDescricaoEData) {
             algumaVisivel = true; //Define que pelo menos uma tarefa está visível.
+            tarefaLi.classList.add('aparecendo');
+            tarefaLi.classList.remove('removendo');
+            setTimeout(() => {
+                tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
+            }, 600);
         } else {
-            tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
+            tarefaLi.classList.add('removendo');
+            tarefaLi.classList.remove('aparecendo');
+            setTimeout(() => {
+                tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
+            }, 600);
         }
     });
 
@@ -146,9 +154,17 @@ const verificarFiltrosAtivos = () => {
 const atualizarMensagemFiltro = () => { //Atualiza a mensagem de filtro com base nos filtros ativos.
     const mensagem = document.getElementById('mensagemFiltro');
     if (verificarFiltrosAtivos()) {
-        mensagem.style.display = 'block'; //Exibe a mensagem de filtro se algum filtro estiver ativo.
+        mensagem.classList.add('aparecendo');
+        mensagem.classList.remove('removendo');
+        setTimeout(() => {
+            mensagem.style.display = 'block'; //Exibe a mensagem de filtro se algum filtro estiver ativo.
+        }, 600);
     } else {
-        mensagem.style.display = 'none'; //Esconde a mensagem de filtro se nenhum filtro estiver ativo.
+        mensagem.classList.add('removendo');
+        mensagem.classList.remove('aparecendo');
+        setTimeout(() => {
+            mensagem.style.display = 'none'; //Esconde a mensagem de filtro se nenhum filtro estiver ativo.
+        }, 600);
     }
 }
 
@@ -181,7 +197,7 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
                 exibirTodasAsTarefas(); //Exibe novamente as tarefas (atualizadas).
                 filtrarTarefas(); //Chama a função de filtragem para atualizar a exibição.
                 console.log(tarefas); //Log das tarefas.
-            }, 400) //Define o tempo de remoção da tarefa em 400ms.
+            }, 600) //Define o tempo de remoção da tarefa em 600ms.
         }
     });
 
@@ -339,19 +355,19 @@ const limparTarefas = () => { //Função para limpar todas as tarefas da lista.
     const confirmacao = window.confirm("Você tem certeza que deseja limpar todas as tarefas?");
     if (!confirmacao) return;
 
-    const itens = lista.querySelectorAll('li'); //Pega todos os <li> da lista.
-
-    itens.forEach(li => {
-        li.classList.add('removendo'); //Aplica a animação de remoção.
-    });
+    const itens = document.querySelectorAll('#task-list li');
+    itens.forEach(item => {
+        item.classList.add('removendo');
+    })
 
     //Espera a animação acabar antes de limpar.
     setTimeout(() => {
         tarefas.length = 0; //Limpa o array.
-        salvarTarefasNoStorage(); //Atualiza o loczalStorage.
         lista.innerHTML = ''; //Limpa visualmente.
         input.value = ''; //Limpa o campo de entrada.
-    }, 400); //Duração igual à da animação CSS.
+    }, 600); //Duração igual à da animação CSS.
+
+    salvarTarefasNoStorage(); //Atualiza o loczalStorage.
 };
 //#endregion Limpeza de Tarefas}
 
