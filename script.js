@@ -13,10 +13,10 @@ const salvarTarefasNoStorage = () => localStorage.setItem('tarefas', JSON.string
 //#region Utilitários
 const dataAtual = () => { //Formata a data atual para o padrão "dd/mm/aaaa - hh:mm:ss".
     const agora = new Date(); //Cria um novo objeto Date com a data e hora atuais.
-    return `[${agora.toLocaleDateString()} - ${agora.toLocaleTimeString()}]`;
+    return agora.toLocaleDateString() + ' - ' + agora.toLocaleTimeString();
 };
 
-const exibirTodasAsTarefas = () => { //Exibe todas as tarefas armazenadas no array de tarefas.
+const exibirTodasAsTarefas = () => { //Itera sobre o array de tarefas e exibe cada uma delas.
     for (let i = 0; i < tarefas.length; i++) {
         exibirTarefaDoIndice(i);
     }
@@ -25,9 +25,7 @@ const exibirTodasAsTarefas = () => { //Exibe todas as tarefas armazenadas no arr
 const informacoes = () => { //Coleta as informações dos elementos HTML necessários para adicionar uma tarefa.
     const inputTarefa = document.getElementById('task-input'); //Coleta o input de tarefa.
     const prioridadeValue = document.getElementById('priority-input').value; //Coleta o valor da prioridade selecionada.
-
-    //Coleta a lista de tarefas onde as novas tarefas serão exibidas.
-    const tasksList = document.getElementById("task-list");
+    const tasksList = document.getElementById("task-list"); //Coleta a lista de tarefas onde as novas tarefas serão exibidas.
     return [inputTarefa, prioridadeValue, tasksList]; //Retorna os valores.
 };
 
@@ -65,94 +63,70 @@ inputEnter();
 //#region Botões de Ação
 
 function filtrarTarefas() {
-    const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status que será filtrado.
-
-    //Pega o valor da prioridade que será filtrado.
+    const statusValue = document.getElementById('filtroStatus').value;
     const prioridadeValue = document.getElementById('filtroPrioridade').value;
-
-    //Pega o valor do texto que será filtrado.
     const filtroTexto = document.getElementById('filtroTexto').value.toLowerCase();
+    const elementosLi = document.querySelectorAll('#task-list li');
 
-    const elementosLi = document.querySelectorAll('#task-list li'); //Pega a lista de tarefas
-    let algumaVisivel = false;
+    let algumaTarefaVisivel = false;
 
-    elementosLi.forEach(tarefaLi => { //Analisa cada tarefa individualmente.
-        const indice = parseInt(tarefaLi.dataset.indice); //Pega o indice da tarefa no "elementosLi" e o pega no indice.
-        if (isNaN(indice)) return; //Pula se não for uma tarefa válida
+    elementosLi.forEach(tarefaLi => {
+        const indice = parseInt(tarefaLi.dataset.indice);
+        if (isNaN(indice)) return;
 
-        const tarefa = tarefas[indice]; //Pega a tarefa do array tarefas específica de acordo com a tarefa na tag Li.
+        const tarefa = tarefas[indice];
         if (!tarefa) return;
 
-        const prioridade = tarefaLi.dataset.prioridade; //Pega o valor da prioridade em cada tarefa na tag Li.
-        //Separa a descrição da tarefa e a data, caso exista.
-        const partes = tarefaLi.textContent.split('-'); //Separa a descrição da tarefa e a data, caso exista.
-        const descricaoDaTarefa = partes[0].trim().toLowerCase(); //Pega apenas a descrição da tarefa.
-        //Verifica se a tarefa possui data, caso não tenha, atribui uma string vazia.
-        const temData = partes.length > 1 && partes[1].includes('['); //Verifica se a tarefa possui data.
-        const dataDaTarefa = temData ? partes[1].split(' [')[1].trim() : ''; //Pega apenas a data da tarefa.
+        const prioridade = tarefaLi.dataset.prioridade;
+        const partes = tarefaLi.textContent.split('-');
+        const descricaoDaTarefa = partes[0].trim().toLowerCase();
+        const temData = partes.length > 1 && partes[1].includes(':');
+        const dataDaTarefa = temData ? partes[1].split(':')[1].trim() : '';
 
-        const bateStatus = //Cria as condições da filtragem por Status.
+        const bateStatus =
             statusValue === '' ||
             (statusValue === 'completa' && tarefa.concluida) ||
             (statusValue === 'pendente' && !tarefa.concluida);
 
-        const batePrioridade = //Cria as condições da filtragem por Prioridade.
+        const batePrioridade =
             prioridadeValue === '' ||
             prioridadeValue === prioridade;
 
-        const bateDescricaoEData = //Cria as condições da filtragem por Descrição. 
+        const bateDescricaoEData =
             descricaoDaTarefa.includes(filtroTexto) ||
             dataDaTarefa.includes(filtroTexto);
 
-        atualizarMensagemFiltro(); //Atualiza a mensagem de filtro com base nos filtros ativos.
+        const deveFicarVisivel = bateStatus && batePrioridade && bateDescricaoEData;
+        const visivelAntes = tarefaLi.style.display !== 'none';
 
-        //Verifica se a tarefa atende a todos os critérios de filtragem.
-        if (bateStatus && batePrioridade && bateDescricaoEData) {
-            algumaVisivel = true; //Define que pelo menos uma tarefa está visível.
-            tarefaLi.classList.add('aparecendo');
+        if (deveFicarVisivel && !visivelAntes) {
             tarefaLi.classList.remove('removendo');
+            tarefaLi.classList.add('aparecendo');
             setTimeout(() => {
-                tarefaLi.style.display = ''; //Exibe a tarefa apos verificar quais os filtros selecionados.
-            }, 600);
-        } else {
-            tarefaLi.classList.add('removendo');
+                tarefaLi.style.display = '';
+            }, 500);
+        } else if (!deveFicarVisivel && visivelAntes) {
             tarefaLi.classList.remove('aparecendo');
+            tarefaLi.classList.add('removendo');
             setTimeout(() => {
-                tarefaLi.style.display = 'none'; //Esconde a tarefa caso não atenda aos critérios de filtragem.
-            }, 600);
+                tarefaLi.style.display = 'none';
+            }, 500);
+        }
+
+        if (deveFicarVisivel) {
+            algumaTarefaVisivel = true;
         }
     });
 
-    alertaFiltro(algumaVisivel); //Chama a função de alerta para mostrar ou esconder a mensagem de filtro.
-    atualizarMensagemFiltro(); //Atualiza a mensagem de filtro com base nos filtros ativos.
+    alertaFiltro(algumaTarefaVisivel); // só chama isso depois de analisar TODAS
 }
 
-const alertaFiltro = (algumaVisivel) => {
-    let aviso = document.getElementById('aviso-filtro'); //Pega o elemento de aviso, caso exista.
-    if (!aviso) { //Verifica se o aviso já existe, caso não exista, cria um novo elemento de aviso.
-        aviso = document.createElement('li');
-        aviso.id = 'aviso-filtro';
-        aviso.style.textAlign = 'left';
-        aviso.style.color = '#888';
-        aviso.style.fontStyle = 'italic';
-        aviso.style.fontSize = '1.5rem';
-        document.getElementById('task-list').appendChild(aviso);
-    }
-    aviso.textContent = 'Nenhuma tarefa encontrada.';
+const algumaVisivel = () => {
+    const statusValue = document.getElementById('filtroStatus').value; //Pega o valor do status que será filtrado.
+    const prioridadeValue = document.getElementById('filtroPrioridade').value; //Pega o valor da prioridade que será filtrado.
+    const filtroTexto = document.getElementById('filtroTexto').value //Pega o valor do texto que será filtrado.
 
-    if (algumaVisivel === true) {
-        aviso.classList.add('removendo');
-        aviso.classList.remove('aparecendo');
-        setTimeout(() => {
-            aviso.style.display = 'none'; //Esconde o aviso caso haja tarefas visíveis.
-        }, 600);
-    } else {
-        aviso.classList.add('aparecendo');
-         aviso.classList.remove('removendo');
-         setTimeout(() => {
-            aviso.style.display = ''; //Exibe o aviso caso não haja tarefas visíveis.
-         }, 600);
-    }
+    return statusValue || prioridadeValue || filtroTexto; //Verifica se algum filtro está ativo.
 }
 
 const verificarFiltrosAtivos = () => {
@@ -163,20 +137,50 @@ const verificarFiltrosAtivos = () => {
     return statusValue || prioridadeValue || filtroTexto; //Verifica se algum filtro está ativo.
 }
 
+const alertaFiltro = (algumaVisivel) => {
+    let aviso = document.getElementById('aviso-filtro');
+    if (!aviso) {
+        aviso = document.createElement('li');
+        aviso.id = 'aviso-filtro';
+        aviso.style.textAlign = 'left';
+        aviso.style.color = '#888';
+        aviso.style.fontStyle = 'italic';
+        aviso.style.fontSize = '1.5rem';
+        aviso.style.display = 'none'; // começa oculto
+        document.getElementById('task-list').appendChild(aviso);
+    }
+
+    aviso.textContent = 'Nenhuma tarefa encontrada.';
+
+    if (algumaVisivel === true) {
+        aviso.classList.add('removendo');
+        aviso.classList.remove('aparecendo');
+        setTimeout(() => {
+            aviso.style.display = 'none';
+        }, 500);
+    } else {
+        aviso.style.display = '';
+        void aviso.offsetWidth;
+        aviso.classList.add('aparecendo');
+        aviso.classList.remove('removendo');
+    }
+}
+
 const atualizarMensagemFiltro = () => { //Atualiza a mensagem de filtro com base nos filtros ativos.
     const mensagem = document.getElementById('mensagemFiltro');
-    if (verificarFiltrosAtivos()) {
+    const verificarValoresFiltros = verificarFiltrosAtivos();
+
+    if (verificarValoresFiltros !== '') { //Verifica se algum filtro está ativo.
+        mensagem.style.display = 'block'; //Exibe a mensagem de filtro se algum filtro estiver ativo.
         mensagem.classList.add('aparecendo');
         mensagem.classList.remove('removendo');
-        setTimeout(() => {
-            mensagem.style.display = 'block'; //Exibe a mensagem de filtro se algum filtro estiver ativo.
-        }, 600);
     } else {
         mensagem.classList.add('removendo');
         mensagem.classList.remove('aparecendo');
+
         setTimeout(() => {
-            mensagem.style.display = 'none'; //Esconde a mensagem de filtro se nenhum filtro estiver ativo.
-        }, 600);
+            mensagem.style.display = 'none';
+        }, 500);
     }
 }
 
@@ -209,7 +213,7 @@ const botaoRemover = (indice) => { //Cria um botão para remover uma tarefa espe
                 exibirTodasAsTarefas(); //Exibe novamente as tarefas (atualizadas).
                 filtrarTarefas(); //Chama a função de filtragem para atualizar a exibição.
                 console.log(tarefas); //Log das tarefas.
-            }, 600) //Define o tempo de remoção da tarefa em 600ms.
+            }, 400) //Define o tempo de remoção da tarefa em 400ms.
         }
     });
 
@@ -306,7 +310,7 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista.
 
     adicionarTarefa(inputTarefa.value, prioridadeValue, false); //Vai pegar as informações e adicionar ao array.
 
-    exibirTarefaDoIndice(tarefas.length - 1); //Adiciona a tarefa ao array e exibe na lista.
+    exibirTarefaDoIndice(tarefas.length - 1, true); //Adiciona a tarefa ao array e exibe na lista.
     filtrarTarefas(); //Chama a função de filtragem para atualizar a exibição.
     inputTarefa.value = ''; //Limpa o campo de entrada após adicionar a tarefa.
     console.log(tarefas); //Log das tarefas.
@@ -315,39 +319,42 @@ const adicionar = () => { //Função para adicionar uma nova tarefa à lista.
 //----------------------------------------------------
 //#region Exibição das Tarefas
 //Exibe as tarefas na lista HTML, criando elementos para cada tarefa e adicionando botões de ação.
-const exibirTarefaDoIndice = (indice) => {
-    const { descricao, prioridade, data } = tarefas[indice]
-    //Coleta as informações necessárias para exibir a tarefa.
+const exibirTarefaDoIndice = (indice, animar = false) => {
+    const { descricao, prioridade, data } = tarefas[indice];
     const [, , listaTarefas] = informacoes();
 
-    const novaTarefa = document.createElement("li"); //Cria um novo elemento de lista para a tarefa.
-    novaTarefa.classList.add('aparecendo'); // aplica a animação
-    novaTarefa.classList.add('text-list'); //Criando uma ClassName para a tag 'li'.
-
-    //Decidido o atributo que adicionará as prioridade.
+    const novaTarefa = document.createElement("li");
+    novaTarefa.classList.add('text-list');
     novaTarefa.setAttribute('data-prioridade', `${prioridade} Prioridade`);
     novaTarefa.setAttribute('data-indice', indice);
 
-    definirCorDaPrioridade(novaTarefa, prioridade); //Coloca a cor de fundo de acordo com cada prioridade.
-    aplicarEstiloMarcaDagua(novaTarefa); //Aplica o estilo da marca d'água, e onde será exibida.
+    definirCorDaPrioridade(novaTarefa, prioridade);
+    aplicarEstiloMarcaDagua(novaTarefa);
 
-    const texto = document.createElement("span"); //Cria um elemento de texto para exibir a descrição da tarefa.
-    texto.textContent = `${descricao} - ${data}`; //Define o texto da tarefa com as informações coletadas.
+    const texto = document.createElement("span");
+    texto.textContent = `${descricao} - ${data}`;
 
-    const containerBotoes = document.createElement("div"); //Cria um contêiner para os botões de ação.
-    containerBotoes.style.display = "flex"; //Define o display do contêiner como flexível.
-    containerBotoes.style.gap = "8px"; //Adiciona um espaçamento entre os botões.
+    const containerBotoes = document.createElement("div");
+    containerBotoes.style.display = "flex";
+    containerBotoes.style.gap = "8px";
 
-    const removerTarefa = botaoRemover(indice); //Cria o botão de remover tarefa, passando o índice da tarefa.
-    const confirmar = botaoConfirmar(indice); //Cria o botão de confirmar tarefa, passando o índice da tarefa.
+    const removerTarefa = botaoRemover(indice);
+    const confirmar = botaoConfirmar(indice);
+    containerBotoes.appendChild(confirmar);
+    containerBotoes.appendChild(removerTarefa);
 
-    containerBotoes.appendChild(confirmar); //Adiciona o botão de confirmar ao contêiner de botões.
-    containerBotoes.appendChild(removerTarefa); //Adiciona o botão de remover ao contêiner de botões.
+    novaTarefa.appendChild(texto);
+    novaTarefa.appendChild(containerBotoes);
 
-    novaTarefa.appendChild(texto); //Adiciona o texto da tarefa ao elemento de lista.
-    novaTarefa.appendChild(containerBotoes); //Adiciona o contêiner de botões ao elemento de lista.
+    // ✅ Aplica animação de entrada
+    if (animar) {
+        novaTarefa.classList.add('aparecendo');
+        setTimeout(() => {
+            novaTarefa.classList.remove('aparecendo');
+        }, 500); // Tempo da sua animação CSS
+    }
 
-    listaTarefas.appendChild(novaTarefa); //Adiciona a nova tarefa à lista de tarefas no HTML.
+    listaTarefas.appendChild(novaTarefa);
 };
 //#endregion Exibição das Tarefas
 
@@ -368,19 +375,19 @@ const limparTarefas = () => { //Função para limpar todas as tarefas da lista.
     const confirmacao = window.confirm("Você tem certeza que deseja limpar todas as tarefas?");
     if (!confirmacao) return;
 
-    const itens = document.querySelectorAll('#task-list li');
-    itens.forEach(item => {
-        item.classList.add('removendo');
-    })
+    const itens = lista.querySelectorAll('li'); //Pega todos os <li> da lista.
+
+    itens.forEach(li => {
+        li.classList.add('removendo'); //Aplica a animação de remoção.
+    });
 
     //Espera a animação acabar antes de limpar.
     setTimeout(() => {
         tarefas.length = 0; //Limpa o array.
+        salvarTarefasNoStorage(); //Atualiza o loczalStorage.
         lista.innerHTML = ''; //Limpa visualmente.
         input.value = ''; //Limpa o campo de entrada.
-    }, 600); //Duração igual à da animação CSS.
-
-    salvarTarefasNoStorage(); //Atualiza o loczalStorage.
+    }, 400); //Duração igual à da animação CSS.
 };
 //#endregion Limpeza de Tarefas}
 

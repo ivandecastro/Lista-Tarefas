@@ -263,21 +263,19 @@ select option {
   padding: 1px 0px;
 }
 
-@keyframes desaparecer {
+.removendo {
+  animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
   from {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0);
   }
-
   to {
     opacity: 0;
     transform: translateY(-10px);
   }
-}
-
-.removendo {
-  animation: desaparecer 0.6s ease-out forwards;
-  overflow: hidden;
 }
 
 .aparecendo {
@@ -289,7 +287,6 @@ select option {
     opacity: 0;
     transform: translateY(-10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
