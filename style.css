@@ -4,12 +4,19 @@
   box-sizing: border-box;
 }
 
+* { 
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE e Edge */
+  overflow-y: auto !important;
+}
+*::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari e Opera */
+}
+
 body {
   background: #f5f6fa;
   font-family: 'Segoe UI', Arial, sans-serif;
   height: 100vh;
-  overflow: hidden;
-  padding: 0;
 }
 
 .container {
